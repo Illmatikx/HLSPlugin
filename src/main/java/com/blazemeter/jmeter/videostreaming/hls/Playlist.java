@@ -140,11 +140,12 @@ public class Playlist {
 
     AtomicInteger sequenceNumber = new AtomicInteger(sequence);
 
-    return mediaPlaylist.getSegments().stream()
+    List<MediaSegment> tempList = mediaPlaylist.getSegments().stream()
         .map(s -> new MediaSegment(sequenceNumber.getAndIncrement(),
             buildAbsoluteUri(s.getURI()), Duration.ofMillis((long) s.getDuration() * 1000)))
         .collect(Collectors.toList());
 
+    return (tempList.size() > 3) ? tempList.subList(tempList.size() - 3, tempList.size()) : tempList;
   }
 
   public boolean hasEnd() {
