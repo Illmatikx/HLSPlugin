@@ -27,7 +27,7 @@ public class HlsSamplerGui extends AbstractSamplerGui {
 
   @Override
   public String getStaticLabel() {
-    return "bzm - Streaming Sampler";
+    return "bzm - LIVE Streaming Sampler";
   }
 
   @Override
