@@ -21,6 +21,8 @@ public class HlsSampler extends VideoStreamingSampler<Playlist, MediaSegment> {
 
   private static final Logger LOG = LoggerFactory.getLogger(HlsSampler.class);
 
+  long segmentDuration = 2000;
+
   public HlsSampler(com.blazemeter.jmeter.hls.logic.HlsSampler baseSampler,
       VideoStreamingHttpClient httpClient, TimeMachine timeMachine,
       SampleResultProcessor sampleResultProcessor) {
@@ -133,13 +135,14 @@ public class HlsSampler extends VideoStreamingSampler<Playlist, MediaSegment> {
       downloadSegment(segment, type);
       lastSegment = segment;
       consumedSeconds += segment.getDurationSeconds();
+      segmentDuration = 1000 * (long) segment.getDurationSeconds();
     }
 
     private void updatePlaylist()
         throws InterruptedException, PlaylistDownloadException, PlaylistParsingException {
 
-      timeMachine.awaitMillis(playlist.getReloadTimeMillisForDurationMultiplier(1,
-          timeMachine.now()));
+      timeMachine.awaitMillis(Long.min(segmentDuration, playlist.getReloadTimeMillisForDurationMultiplier(1,
+          timeMachine.now())));
       Playlist updatedPlaylist = downloadPlaylist(playlist.getUri(), this.type);
 
       while (updatedPlaylist.equals(playlist)) {
